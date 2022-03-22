@@ -1,0 +1,145 @@
+DAVID SEIJAS Y ALEJANDRO RAMÍREZ
+
+EJERCICIOS:
+
+1.
+  transaction cost:	22812 gas 
+  execution cost:	22812 gas 
+  logs:	[
+    {
+      "from": "0xd9145CCE52D386f254917e481eB44e9943F39138",
+      "topic": "0x241ba3bafc919fb4308284ce03a8f4867a8ec2f0401445d3cf41a468e7db4ae0",
+      "event": "Print",
+      "args": {
+        "0": "Hello, World!",
+        "message": "Hello, World!"
+      }
+    }
+  ]
+  val:	0 wei
+ 
+ 
+ 
+2.
+
+CÓDIGO: 
+  // SPDX-License-Identifier: GPL-3.0
+  pragma solidity >=0.7.0 <0.8.0;
+
+  contract hello {
+      event Print(string message);
+      function helloWorld() public {
+          emit Print("Hello, World!");
+      }
+
+      function factorial(uint n) public pure returns (uint){
+          uint sol = 1;
+          for(uint i = n; i > 0; i--){
+              sol *= i;
+          }
+          return sol;
+      }
+  }
+  
+RESULTADO: 
+  uint256: 30414093201713378043612608166064768844377641568960512000000000000
+
+TRANSACCION: 
+  [vm]from: 0x5B3...eddC4to: hello.(constructor)value: 0 weidata: 0x608...50033logs: 0hash: 0xa06...4e1c1
+  Debug
+  status	true Transaction mined and execution succeed
+  transaction hash	0xa06cb140b82f0eedf1fdef2a0561cf34e253e1ec674c15e38782604e4f04e1c1
+  from	0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
+  to	hello.(constructor)
+  gas	80000000 gas
+  transaction cost	127813 gas 
+  execution cost	127813 gas 
+  hash	0xa06cb140b82f0eedf1fdef2a0561cf34e253e1ec674c15e38782604e4f04e1c1
+  input	0x608...50033
+  decoded input	{}
+  decoded output	 - 
+  logs	[]
+  val	0 wei
+  call to hello.factorial
+
+
+ 
+3.
+
+CÓDIGO:
+  // SPDX-License-Identifier: GPL-3.0
+  pragma solidity >=0.7.0 <0.9.0;
+
+  contract PiggyBank0 {
+
+      function deposit() external payable{
+
+      }
+
+      function withdraw(uint amountInWei) external{
+          require(address(this).balance > amountInWei, "No hay suficiente dinero en la hucha");
+          payable(msg.sender).transfer(amountInWei);
+      }
+
+      function getBalance() external view returns (uint){
+          return address(this).balance;
+      }
+  }
+  
+TESTS:
+  1. 
+    transaction cost:	21206 gas 
+    execution cost:	21206 gas 
+    decoded output:	{}
+    logs:	[]
+    val:	3000000000000000000 wei
+          
+    Cuenta EOA: 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2
+    SALDO: 100 -> 96.99999999999999978794
+    
+  2.
+    transact to PiggyBank0.withdraw errored: VM error: revert.
+
+    revert
+      The transaction has been reverted to the initial state.
+    Reason provided by the contract: "No hay suficiente dinero en la hucha".
+    Debug the transaction to get more information.
+  
+    transaction cost:	22000 gas 
+    execution cost:	22000 gas 
+    decoded input	{
+      "uint256 amountInWei": "5000000000000000000"
+    }
+    decoded output	{}
+    logs	[]
+    val	0 wei
+           
+    Cuenta EOA: 0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB
+    SALDO: 100 -> 99.9999999999999978
+    
+    *Si en vez de require hubiésemos usado un if para comprobar si había saldo, el mensaje de error podríamos haberlo mostrado con un event Print como en los ejercicios anteriores y la salida se hubiese mostrado en el apartado logs
+
+  3.
+    TRANSACCIÓN WITHDRAW: transaction cost:	28574 gas 
+                          execution cost:	28574 gas 
+                          decoded input	{
+                            "uint256 amountInWei": "1000000000000"
+                          }
+                          decoded output	{}
+                          logs	[]
+                          val	0 wei
+                        
+    TRANSACCIÓN GETBALANCE: from:	0x17F6AD8Ef982297579C203069C1DbfFE4348c372
+                            to:	PiggyBank0.getBalance() 0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47
+                            execution cos:	21381 gas (Cost only applies when called by a contract)
+                            decoded input	{}
+                            decoded output	{
+                              "0": "uint256: 2999999000000000000"
+                            }
+                            logs	[]
+   
+                    SALIDA: uint256: 2999999000000000000
+   
+    Cuenta EOA: 0x17F6AD8Ef982297579C203069C1DbfFE4348c372
+    SALDO: 100 -> 100.000000999999971426
+    *El saldo se ve que es 100 + 0.000001 (1 Szabo en ether) - coste de la transaccion realizada (2857 wei) 
